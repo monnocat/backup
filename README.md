@@ -14,9 +14,9 @@ This is my Advanced Recursive Backup Script of Amazing Awesomeness. It lets you 
 A config is a JSON object that consists of the following keys:
 
 - `mode`: One of `"all"`/`"include"`/`"exclude"`.
-- `include`?: Optional. A list of items to include (if mode is "include"). Items can be included from subdirectories, in which case the intermediate directories will behave as if they were in `include` mode, with the included directories being the ones listed.
-- `exclude`?: Optional. A list of items to exclude (if mode is "exclude")
-- `configs`?: Optional. A collection of key-value pairs `item: config`. There can be a `"*"` entry, which will be the fallback config for all items that need to be configured. Note that only directories can be configured.
+- `include`: Optional. A list of items to include (if mode is "include"). Items can be included from subdirectories, in which case the intermediate directories will behave as if they were in `include` mode, with the included directories being the ones listed.
+- `exclude`: Optional. A list of items to exclude (if mode is "exclude")
+- `configs`: Optional. A collection of key-value pairs `item: config`. There can be a `"*"` entry, which will be the fallback config for all items that need to be configured. Note that only directories can be configured.
 
 Top level object must have an entrypoint named `start` (does not accept `~`).
 
