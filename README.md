@@ -6,8 +6,8 @@ This is my Advanced Recursive Backup Script of Amazing Awesomeness. It lets you 
 
 `./backup.sh [-c config] [-o output]`
 
-- `-c config`?: Optional. A config file. Defaults to `config.json`.
-- `-o output`?: Optional. An output file. Defaults to `backup-YYYY_MM_DD-XXXXX.tar.gz`. Supported extensions are `tar.gz` and `zip`.
+- `-c config`: Optional. A config file. Defaults to `config.json`.
+- `-o output`: Optional. An output file. Defaults to `backup-YYYY_MM_DD-XXXXX.tar.gz`. Supported extensions are `tar.gz` and `zip`.
 
 ## Configuration
 
