@@ -1,0 +1,29 @@
+{
+    "start": ".",
+    "mode": "include",
+    "include": [
+        "backup.sh",
+        "README.md",
+        "test 2",
+        "test/inner",
+        "test/inner/innerer"
+    ],
+    "configs": {
+        "test/test 1/inner": "test/test 1/inner",
+        "test/test 2": {
+            "mode": "all",
+            "configs": { "*": "dN" }
+        }
+    },
+
+    "templates": {
+        "test/test 1/inner": {
+            "mode": "include",
+            "include": ["a", "spaces here"]
+        },
+        "dN": {
+            "mode": "include",
+            "include": ["a"]
+        }
+    }
+}
