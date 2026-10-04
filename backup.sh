@@ -12,17 +12,18 @@ log() {
 
 ctrl_c() {
     log "Exiting"
-    if [[ -n $start && -n $output_filename && -n $output_format ]]; then
-        file="$start/.$output_filename.$output_format"
+    if [[ -n $start && -n $temp_output_file ]]; then
+        file="$start/$temp_output_file"
         log "Removing $file"
         rm "$file"
     fi
 }
 
 set -Eeo pipefail
-stty -echoctl # hide ^C
-trap ctrl_c INT
+stty -echoctl   # hide ^C
+trap ctrl_c INT # trap Ctrl+C
 
+# parse args
 while [[ $# -gt 0 ]]; do
     case $1 in
     -c | --config)
@@ -38,8 +39,7 @@ while [[ $# -gt 0 ]]; do
     -h | --help)
         log "./backup.sh [-c config] [-o output]
   -c config: Optional. A config file. Defaults to config.json.
-  -o output: Optional. An output file. Defaults to backup-YYYY-MM-DD-XXXXX.tar.gz. Supported extensions are tar.gz and zip.
-"
+  -o output: Optional. An output file. Defaults to backup-YYYY-MM-DD-XXXXX.tar.gz. Supported extensions are tar.gz and zip."
         exit 0
         ;;
     -*)
@@ -57,12 +57,14 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
+# default config file
 if [[ -z $config_file ]]; then
     config_file='config.json'
     log "No config file provided, using $config_file"
 fi
 config_content=$(cat "$config_file")
 
+# parse/default output file
 if [[ -z $output_file ]]; then
     output_filename="backup-$(date "+%Y-%m-%d")"
     output_format='tar.gz'
@@ -83,6 +85,8 @@ else
         ;;
     esac
 fi
+
+temp_output_file=".$output_filename.$output_format"
 
 # List all files except . and .., without the starting ./
 # $1: max depth
@@ -254,7 +258,7 @@ resolve() {
     # exclude every path that needs to be configured
     items=$(difference "$items" "$configs_items")
     # exclude the backup archive itself
-    items=$(jq "map(select(. != \".$output_filename.$output_format\"))" <<<"$items")
+    items=$(jq "map(select(. != \"$temp_output_file\"))" <<<"$items")
 
     # log the progress
     log "$(jq -r ".[] | \"- $2/\" + ." <<<"$items")"
@@ -300,14 +304,14 @@ mapfile -t items < <(
 case "$output_format" in
 tar.gz)
     log "Starting tar..."
-    tar -czf ".$output_filename.tar.gz" --exclude ".$output_filename.$output_format" "${items[@]}"
+    tar -czf "$temp_output_file" --exclude "$temp_output_file" "${items[@]}"
     ;;
 zip)
     log "Starting zip..."
-    zip -r9 ".$output_filename.zip" "${items[@]}" -x ".$output_filename.$output_format"
+    zip -r9 "$temp_output_file" -x "$temp_output_file" @ "${items[@]}"
     ;;
 esac
 
-hash=$(sha256sum ".$output_filename.$output_format" | cut -c1-5)
+hash=$(sha256sum "$temp_output_file" | cut -c1-5)
 cd '-' >/dev/null
-mv "$start/.$output_filename.$output_format" "$output_filename-$hash.$output_format"
+mv "$start/$temp_output_file" "$output_filename-$hash.$output_format"
