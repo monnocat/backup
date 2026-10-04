@@ -49,7 +49,7 @@ while [[ $# -gt 0 ]]; do
     *)
         if [[ -z $config_file ]]; then
             config_file=$1
-        elif [[ -z $config_file ]]; then
+        elif [[ -z $output_file ]]; then
             output_file=$1
         fi
         shift # past argument
@@ -253,6 +253,8 @@ resolve() {
 
     # exclude every path that needs to be configured
     items=$(difference "$items" "$configs_items")
+    # exclude the backup archive itself
+    items=$(jq "map(select(. != \".$output_filename.$output_format\"))" <<<"$items")
 
     # log the progress
     log "$(jq -r ".[] | \"- $2/\" + ." <<<"$items")"
@@ -298,11 +300,11 @@ mapfile -t items < <(
 case "$output_format" in
 tar.gz)
     log "Starting tar..."
-    tar -czf ".$output_filename.tar.gz" "${items[@]}"
+    tar -czf ".$output_filename.tar.gz" --exclude ".$output_filename.$output_format" "${items[@]}"
     ;;
 zip)
     log "Starting zip..."
-    zip -r9 ".$output_filename.zip" "${items[@]}"
+    zip -r9 ".$output_filename.zip" "${items[@]}" -x ".$output_filename.$output_format"
     ;;
 esac
 

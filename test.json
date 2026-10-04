@@ -1,23 +1,24 @@
 {
     "start": ".",
     "mode": "include",
-    "include": [
-        "backup.sh",
-        "README.md",
-        "test 2",
-        "test/inner",
-        "test/inner/innerer"
-    ],
+    "include": ["backup.sh", "README.md", "test"],
     "configs": {
-        "test/test 1/inner": "test/test 1/inner",
-        "test/test 2": {
+        "test": {
             "mode": "all",
-            "configs": { "*": "dN" }
+            "configs": {
+                "comment": "//? this doesn't work",
+                "test 1/inner": "test 1/inner",
+
+                "test 2": {
+                    "mode": "all",
+                    "configs": { "*": "dN" }
+                }
+            }
         }
     },
 
     "templates": {
-        "test/test 1/inner": {
+        "test 1/inner": {
             "mode": "include",
             "include": ["a", "spaces here"]
         },
