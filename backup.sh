@@ -38,7 +38,7 @@ while [[ $# -gt 0 ]]; do
     -h | --help)
         log "./backup.sh [-c config] [-o output]
   -c config: Optional. A config file. Defaults to config.json.
-  -o output: Optional. An output file. Defaults to backup-YYYY_MM_DD-XXXXX.tar.gz. Supported extensions are tar.gz and zip.
+  -o output: Optional. An output file. Defaults to backup-YYYY-MM-DD-XXXXX.tar.gz. Supported extensions are tar.gz and zip.
 "
         exit 0
         ;;
@@ -64,7 +64,7 @@ fi
 config_content=$(cat "$config_file")
 
 if [[ -z $output_file ]]; then
-    output_filename="backup-$(date "+%Y_%m_%d")"
+    output_filename="backup-$(date "+%Y-%m-%d")"
     output_format='tar.gz'
     log "No output file provided, using $output_filename-XXXXX.$output_format"
 else
